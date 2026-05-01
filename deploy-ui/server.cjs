@@ -3,16 +3,16 @@ const { spawn } = require('child_process');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 app.use(express.json());
-app.use(express.static('deploy-ui'));
+app.use(express.static(path.join(__dirname)));
 
 const projectPath = path.join(__dirname, '..');
 
 function runCommand(command, args, cwd = projectPath) {
   return new Promise((resolve, reject) => {
-    const process = spawn(command, args, { cwd, shell: true });
+    const process = spawn(command, args, { cwd });
     let output = '';
     
     process.stdout.on('data', (data) => {
@@ -35,12 +35,19 @@ function runCommand(command, args, cwd = projectPath) {
 
 app.get('/api/status', async (req, res) => {
   try {
-    const versionOutput = await runCommand('git', ['describe', '--tags', '--abbrev=0']);
+    let currentVersion = null;
+    try {
+      const versionOutput = await runCommand('git', ['describe', '--tags', '--abbrev=0']);
+      currentVersion = versionOutput.trim();
+    } catch (e) {
+      currentVersion = null;
+    }
+    
     const commitOutput = await runCommand('git', ['log', '--oneline', '-1']);
     const statusOutput = await runCommand('git', ['status', '--porcelain']);
     
     res.json({
-      currentVersion: versionOutput.trim() || null,
+      currentVersion: currentVersion,
       lastCommit: commitOutput.trim(),
       changes: statusOutput.trim().split('\n').filter(line => line.trim()).length
     });
@@ -99,7 +106,7 @@ app.post('/api/release', async (req, res) => {
       await runCommand('git', ['add', '-A']);
       
       res.write('📝 提交代码...\n');
-      await runCommand('git', ['commit', '-m', commitMessage]);
+      await runCommand('git', ['commit', '-m', commitMessage || '版本更新']);
     }
     
     res.write('🏷️ 计算版本号...\n');
@@ -108,8 +115,20 @@ app.post('/api/release', async (req, res) => {
     if (versionType === 'custom') {
       version = customVersion;
     } else {
-      const currentTag = await runCommand('git', ['describe', '--tags', '--abbrev=0']).catch(() => 'v0.0.0');
-      const parts = currentTag.trim().replace('v', '').split('.').map(Number);
+      let currentTag = 'v0.0.0';
+      try {
+        const tagOutput = await runCommand('git', ['describe', '--tags', '--abbrev=0']);
+        currentTag = tagOutput.trim();
+      } catch (e) {
+        // 如果没有标签，使用默认值
+      }
+      
+      const parts = currentTag.replace('v', '').split('.').map(Number);
+      if (parts.length !== 3) {
+        parts[0] = 0;
+        parts[1] = 0;
+        parts[2] = 0;
+      }
       
       if (versionType === 'patch') parts[2]++;
       else if (versionType === 'minor') { parts[1]++; parts[2] = 0; }
@@ -119,7 +138,8 @@ app.post('/api/release', async (req, res) => {
     }
     
     res.write(`📌 创建版本标签: ${version}\n`);
-    await runCommand('git', ['tag', '-a', version, '-m', `版本 ${version}\n\n${releaseNotes || ''}`]);
+    const tagMessage = `版本 ${version}${releaseNotes ? '\n\n' + releaseNotes : ''}`;
+    await runCommand('git', ['tag', '-a', version, '-m', tagMessage]);
     
     res.write('🌐 推送代码到 GitHub...\n');
     await runCommand('git', ['push', 'origin', 'main']);
