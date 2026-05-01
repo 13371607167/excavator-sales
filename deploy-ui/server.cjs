@@ -97,11 +97,15 @@ app.post('/api/release', async (req, res) => {
   
   const { versionType, customVersion, commitMessage, releaseNotes } = req.body;
   
+  let version = null;
+  let commitNeeded = false;
+  
   try {
     res.write('📝 检查代码变更...\n');
     
     const statusOutput = await runCommand('git', ['status', '--porcelain']);
-    if (statusOutput.trim()) {
+    commitNeeded = !!statusOutput.trim();
+    if (commitNeeded) {
       res.write('🔄 暂存所有变更...\n');
       await runCommand('git', ['add', '-A']);
       
@@ -110,7 +114,6 @@ app.post('/api/release', async (req, res) => {
     }
     
     res.write('🏷️ 计算版本号...\n');
-    let version;
     
     if (versionType === 'custom') {
       version = customVersion;
@@ -137,12 +140,12 @@ app.post('/api/release', async (req, res) => {
       version = 'v' + parts.join('.');
     }
     
+    res.write('🌐 推送代码到 GitHub...\n');
+    await runCommand('git', ['push', 'origin', 'main']);
+    
     res.write(`📌 创建版本标签: ${version}\n`);
     const tagMessage = `版本 ${version}${releaseNotes ? '\n\n' + releaseNotes : ''}`;
     await runCommand('git', ['tag', '-a', version, '-m', tagMessage]);
-    
-    res.write('🌐 推送代码到 GitHub...\n');
-    await runCommand('git', ['push', 'origin', 'main']);
     
     res.write('📤 推送版本标签...\n');
     await runCommand('git', ['push', 'origin', version]);
@@ -153,6 +156,32 @@ app.post('/api/release', async (req, res) => {
     res.end();
   } catch (error) {
     res.write('❌ 发布失败: ' + error.message + '\n');
+    
+    // 回滚操作
+    try {
+      if (version) {
+        res.write('🔄 回滚版本标签...\n');
+        try {
+          await runCommand('git', ['tag', '-d', version]);
+          res.write('✅ 本地标签已删除\n');
+        } catch (e) {
+          // 标签可能不存在，忽略
+        }
+      }
+      
+      if (commitNeeded) {
+        res.write('🔄 回滚代码提交...\n');
+        try {
+          await runCommand('git', ['reset', '--mixed', 'HEAD~1']);
+          res.write('✅ 提交已回滚\n');
+        } catch (e) {
+          // 回滚可能失败，忽略
+        }
+      }
+    } catch (rollbackError) {
+      res.write('⚠️ 回滚过程中出错: ' + rollbackError.message + '\n');
+    }
+    
     res.end();
   }
 });
