@@ -10,7 +10,7 @@ import AdminContact from "@/pages/admin/AdminContact";
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/excavator-sales/">
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
