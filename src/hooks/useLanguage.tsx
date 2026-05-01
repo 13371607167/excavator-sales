@@ -17,7 +17,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return saved || defaultLanguage;
   });
 
-  const dir = languages.find(l => l.code === language)?.dir || 'ltr';
+  const dir: 'ltr' | 'rtl' = (languages.find(l => l.code === language)?.dir || 'ltr') as 'ltr' | 'rtl';
 
   const setLanguage = (lang: string) => {
     setLanguageState(lang);
