@@ -1,18 +1,21 @@
 import { Link } from 'react-router-dom';
 import { Clock, Calendar, Gauge } from 'lucide-react';
 import type { Product } from '@/types';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { t } = useLanguage();
+
   const formatPrice = () => {
     if (product.status === 'sold') {
-      return '已售';
+      return t('sold');
     }
     if (product.priceType === 'negotiable' || product.price === null) {
-      return '价格面议';
+      return t('negotiable');
     }
     return `¥${product.price.toLocaleString()}`;
   };
@@ -24,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   const getCategoryLabel = () => {
-    return product.category === 'excavator' ? '挖掘机' : '配件';
+    return product.category === 'excavator' ? t('filterExcavator') : t('filterParts');
   };
 
   const getCategoryClass = () => {
@@ -55,7 +58,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {product.status === 'sold' && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
             <span className="bg-accent-red text-white px-4 py-1 rounded font-bold text-sm transform -rotate-12">
-              已售出
+              {t('sold')}
             </span>
           </div>
         )}
@@ -85,18 +88,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.specifications.year && (
             <div className="flex items-center gap-1">
               <Calendar size={10} />
-              <span>{product.specifications.year}年</span>
+              <span>{product.specifications.year}</span>
             </div>
           )}
           {product.specifications.hours !== undefined && (
             <div className="flex items-center gap-1">
               <Gauge size={10} />
-              <span>{product.specifications.hours.toLocaleString()}小时</span>
+              <span>{product.specifications.hours.toLocaleString()}h</span>
             </div>
           )}
           {!product.specifications.year && !product.specifications.hours && product.category === 'parts' && (
             <div className="flex items-center gap-1">
-              <span className="text-accent-green">现货供应</span>
+              <span className="text-accent-green">{t('inStock')}</span>
             </div>
           )}
         </div>

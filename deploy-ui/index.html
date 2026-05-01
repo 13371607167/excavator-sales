@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>挖掘机销售网站 - 部署管理</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-group .btn {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .status-box {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      color: #333;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+      border-left: 4px solid #667eea;
+    }
+    
+    .status-box.error {
+      border-left-color: #e74c3c;
+      background: #fff5f5;
+      color: #c0392b;
+    }
+    
+    .status-box.success {
+      border-left-color: #27ae60;
+      background: #f0fff4;
+      color: #1e8449;
+    }
+    
+    .input-group {
+      margin-bottom: 15px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    
+    .input-group input:focus,
+    .input-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .input-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+    
+    .radio-item:hover {
+      background: #e9ecef;
+    }
+    
+    .radio-item input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    .radio-item label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    
+    .info-box {
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #856404;
+      font-size: 14px;
+    }
+    
+    .info-box a {
+      color: #856404;
+      text-decoration: underline;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .version-info {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .version-tag {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .commit-info {
+      background: #f8f9fa;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .tab {
+      padding: 12px 24px;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.3s ease;
+    }
+    
+    .tab:hover {
+      color: #667eea;
+    }
+    
+    .tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 挖掘机销售网站 - 部署管理</h1>
+      <p>可视化部署工具，一键发布新版本</p>
+    </div>
+
+    <div class="info-box" style="background: #e7f3ff; border-color: #b6d4fe; color: #084298;">
+      <strong>📖 使用说明</strong><br>
+      1. 修改代码后，刷新状态查看变更<br>
+      2. 选择快速发布或版本发布<br>
+      3. 等待 1-2 分钟，网站自动更新<br>
+      <br>
+      <strong>🔗 网站地址</strong><br>
+      <a href="https://13371607167.github.io/excavator-sales/" target="_blank">https://13371607167.github.io/excavator-sales/</a>
+    </div>
+
+    <div class="card">
+      <div class="card-title">当前状态（本地）</div>
+      <div class="info-box" style="background: #e7f3ff; border-color: #b6d4fe; color: #084298; margin-bottom: 15px;">
+        <strong>📊 这个卡片显示什么？</strong><br>
+        显示的是<strong>你电脑本地</strong>的 Git 状态：<br>
+        • <strong>版本号</strong>：本地最新的版本（如 v1.0.0）<br>
+        • <strong>最新提交</strong>：本地最近一次代码提交记录<br>
+        • <strong>变更文件</strong>：本地有多少文件修改了但还没发布
+      </div>
+      <div class="version-info" id="versionInfo">
+        <span class="version-tag">检测中...</span>
+      </div>
+      <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;" onclick="checkStatus()">
+        <span>🔍</span> 刷新状态
+      </button>
+    </div>
+
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('quick')">🚀 快速发布</button>
+        <button class="tab" onclick="switchTab('version')">🏷️ 版本发布</button>
+      </div>
+      
+      <div id="tab-quick" class="tab-content active">
+        <div class="info-box" style="background: #f0fff4; border-color: #a3cfbb; color: #145228; margin-bottom: 20px;">
+          <strong>✅ 什么时候用快速发布？</strong><br>
+          • 修复小 bug 或错别字<br>
+          • 微调样式或文案<br>
+          • 日常小功能修改<br>
+          <em>→ 这些修改不需要保留版本记录</em>
+        </div>
+        <button class="btn btn-primary" style="width: 100%;" onclick="deployQuick()">
+          <span>🚀</span> 一键发布
+        </button>
+      </div>
+      
+      <div id="tab-version" class="tab-content">
+        <div class="info-box" style="background: #fff3cd; border-color: #ffc107; color: #664d03; margin-bottom: 20px;">
+          <strong>🏷️ 什么时候用版本发布？</strong><br>
+          • 新增重要功能<br>
+          • 界面大改版<br>
+          • 正式对外发布<br>
+          <em>→ 这些修改需要保留版本记录，方便以后回溯</em>
+        </div>
+        <div class="input-group">
+          <label>版本类型</label>
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" name="versionType" value="patch" checked>
+              <label>🔧 Patch (小修复)</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="versionType" value="minor">
+              <label>✨ Minor (新功能)</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="versionType" value="major">
+              <label>🚀 Major (大版本)</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="versionType" value="custom">
+              <label>📝 自定义</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="input-group" id="customVersionInput" style="display: none;">
+          <label>自定义版本号</label>
+          <input type="text" id="customVersion" placeholder="例如: v1.2.3">
+        </div>
+
+        <div class="input-group">
+          <label>修改描述</label>
+          <textarea id="commitMessage" placeholder="请输入本次修改的描述..."></textarea>
+        </div>
+
+        <div class="input-group">
+          <label>版本说明（可选）</label>
+          <textarea id="releaseNotes" placeholder="添加详细的版本说明..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%;" onclick="releaseVersion()">
+          <span>🏷️</span> 创建版本并发布
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">部署日志</div>
+      <div class="info-box" style="background: #f8f9fa; border-color: #dee2e6; color: #495057; margin-bottom: 15px;">
+        <strong>📝 这个区域显示什么？</strong><br>
+        • 操作进度的实时日志<br>
+        • 成功或失败的提示信息<br>
+        • 如果出错，会显示具体原因
+      </div>
+      <div class="status-box" id="statusBox">点击上方按钮开始操作...</div>
+    </div>
+
+    <div class="info-box">
+      <strong>⏱️ 部署提示</strong><br>
+      部署完成后，网站会在 1-2 分钟内自动更新生效。
+    </div>
+  </div>
+
+  <script>
+    const statusBox = document.getElementById('statusBox');
+    const versionInfo = document.getElementById('versionInfo');
+    const customVersionInput = document.getElementById('customVersionInput');
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    document.querySelectorAll('input[name="versionType"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        customVersionInput.style.display = radio.value === 'custom' ? 'block' : 'none';
+      });
+    });
+
+    function updateStatus(message, type = 'info') {
+      statusBox.textContent = message;
+      statusBox.className = 'status-box ' + type;
+    }
+
+    function appendStatus(message) {
+      statusBox.textContent += '\n' + message;
+      statusBox.scrollTop = statusBox.scrollHeight;
+    }
+
+    async function checkStatus() {
+      updateStatus('🔍 正在检查状态...', 'info');
+      
+      try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        
+        versionInfo.innerHTML = `
+          <span class="version-tag">${data.currentVersion || '暂无版本'}</span>
+          <span class="commit-info">${data.lastCommit || '无提交记录'}</span>
+        `;
+        
+        updateStatus(`✅ 当前版本: ${data.currentVersion || '暂无版本'}\n📝 最新提交: ${data.lastCommit || '无'}\n📁 变更文件: ${data.changes || '0'} 个`, 'success');
+      } catch (error) {
+        updateStatus('❌ 无法连接到服务器', 'error');
+      }
+    }
+
+    async function deployQuick() {
+      updateStatus('🚀 开始一键部署...', 'info');
+      
+      try {
+        const response = await fetch('/api/deploy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          appendStatus(decoder.decode(value));
+        }
+        
+        statusBox.className = 'status-box success';
+        appendStatus('\n✅ 部署完成！');
+      } catch (error) {
+        updateStatus('❌ 部署失败: ' + error.message, 'error');
+      }
+    }
+
+    async function releaseVersion() {
+      const versionType = document.querySelector('input[name="versionType"]:checked').value;
+      const customVersion = document.getElementById('customVersion').value;
+      const commitMessage = document.getElementById('commitMessage').value || '版本更新';
+      const releaseNotes = document.getElementById('releaseNotes').value;
+
+      if (versionType === 'custom' && !customVersion) {
+        updateStatus('❌ 请输入自定义版本号', 'error');
+        return;
+      }
+
+      updateStatus('🏷️ 正在创建版本...', 'info');
+      
+      try {
+        const response = await fetch('/api/release', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            versionType,
+            customVersion,
+            commitMessage,
+            releaseNotes
+          })
+        });
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          appendStatus(decoder.decode(value));
+        }
+        
+        statusBox.className = 'status-box success';
+        appendStatus('\n✅ 版本发布完成！');
+      } catch (error) {
+        updateStatus('❌ 发布失败: ' + error.message, 'error');
+      }
+    }
+
+    checkStatus();
+  </script>
+</body>
+</html>

@@ -3,10 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { useStore } from '@/store';
 import ProductCard from '@/components/ProductCard';
+import { useLanguage } from '@/hooks/useLanguage';
 import type { Category, ProductStatus } from '@/types';
 
 export default function Products() {
   const { products } = useStore();
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -150,7 +152,7 @@ export default function Products() {
                   : 'bg-dark-100 text-dark-600 hover:bg-dark-200'
               }`}
             >
-              全部
+              {t('all')}
             </button>
             <button
               onClick={() => handleCategoryChange('excavator')}
@@ -160,17 +162,17 @@ export default function Products() {
                   : 'bg-dark-100 text-dark-600 hover:bg-dark-200'
               }`}
             >
-              挖掘机
+              {t('filterExcavator')}
             </button>
             <button
               onClick={() => handleCategoryChange('parts')}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                 selectedCategory === 'parts'
-                  ? 'bg-accent-orange text-white'
+                  ? 'bg-primary-500 text-white'
                   : 'bg-dark-100 text-dark-600 hover:bg-dark-200'
               }`}
             >
-              配件
+              {t('filterParts')}
             </button>
           </div>
         </div>
@@ -227,7 +229,7 @@ export default function Products() {
                   onChange={(e) => setSelectedBrand(e.target.value)}
                   className="w-full px-3 py-2.5 border border-dark-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-sm"
                 >
-                  <option value="all">全部品牌</option>
+                  <option value="all">{t('all')}品牌</option>
                   {brands.map((brand) => (
                     <option key={brand} value={brand}>{brand}</option>
                   ))}
@@ -241,7 +243,7 @@ export default function Products() {
                   onChange={(e) => setSelectedStatus(e.target.value as ProductStatus | 'all')}
                   className="w-full px-3 py-2.5 border border-dark-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-sm"
                 >
-                  <option value="all">全部状态</option>
+                  <option value="all">{t('all')}状态</option>
                   <option value="available">在售</option>
                   <option value="sold">已售</option>
                 </select>
@@ -255,7 +257,7 @@ export default function Products() {
                     onChange={(e) => setSelectedYear(e.target.value)}
                     className="w-full px-2.5 py-2 border border-dark-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-sm"
                   >
-                    <option value="all">全部</option>
+                    <option value="all">{t('all')}</option>
                     {years.map((year) => (
                       <option key={year} value={year}>{year}年</option>
                     ))}
@@ -268,7 +270,7 @@ export default function Products() {
                     onChange={(e) => setSelectedHours(e.target.value)}
                     className="w-full px-2.5 py-2 border border-dark-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white text-sm"
                   >
-                    <option value="all">全部</option>
+                    <option value="all">{t('all')}</option>
                     <option value="0-3000">3000以下</option>
                     <option value="3000-5000">3000-5000</option>
                     <option value="5000-8000">5000-8000</option>

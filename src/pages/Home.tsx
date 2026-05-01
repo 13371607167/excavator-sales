@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Wrench, Phone, MessageCircle, MapPin, Clock, Shield, Eye, Award, Headphones, CheckCircle } from 'lucide-react';
 import { useStore } from '@/store';
 import ProductCard from '@/components/ProductCard';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function Home() {
   const { products, contact } = useStore();
+  const { t } = useLanguage();
   
   const featuredProducts = products.filter(p => p.status === 'available').slice(0, 4);
   const excavatorCount = products.filter(p => p.category === 'excavator' && p.status === 'available').length;
@@ -26,10 +28,10 @@ export default function Home() {
         
         <div className="relative z-10 text-center px-4">
           <h1 className="text-3xl font-bold text-white mb-4 leading-tight">
-            专业挖掘机<span className="text-primary-400">销售平台</span>
+            {t('heroTitle')}
           </h1>
           <p className="text-base text-dark-100 mb-6 max-w-sm mx-auto">
-            品质保证，价格透明
+            {t('heroSubtitle')}
           </p>
         </div>
       </section>
@@ -49,9 +51,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-3">
                   <Truck size={24} />
                 </div>
-                <h3 className="text-lg font-bold mb-1">挖掘机</h3>
-                <p className="text-white/80 text-xs mb-2">各类品牌</p>
-                <span className="inline-block bg-white/20 px-2 py-0.5 rounded-full text-xs">{excavatorCount} 台</span>
+                <h3 className="text-lg font-bold mb-1">{t('filterExcavator')}</h3>
+                <p className="text-white/80 text-xs mb-2">{t('trustFeatures.quality.title')}</p>
+                <span className="inline-block bg-white/20 px-2 py-0.5 rounded-full text-xs">{excavatorCount}</span>
               </div>
             </Link>
 
@@ -66,9 +68,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-3">
                   <Wrench size={24} />
                 </div>
-                <h3 className="text-lg font-bold mb-1">配件</h3>
-                <p className="text-white/80 text-xs mb-2">原装品质</p>
-                <span className="inline-block bg-white/20 px-2 py-0.5 rounded-full text-xs">{partsCount} 件</span>
+                <h3 className="text-lg font-bold mb-1">{t('filterParts')}</h3>
+                <p className="text-white/80 text-xs mb-2">{t('trustFeatures.quality.title')}</p>
+                <span className="inline-block bg-white/20 px-2 py-0.5 rounded-full text-xs">{partsCount}</span>
               </div>
             </Link>
           </div>
@@ -83,32 +85,32 @@ export default function Home() {
               <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Shield className="text-primary-500" size={20} />
               </div>
-              <h3 className="font-bold text-dark-600 text-sm">品质保证</h3>
-              <p className="text-dark-400 text-xs">专业检测</p>
+              <h3 className="font-bold text-dark-600 text-sm">{t('trustFeatures.quality.title')}</h3>
+              <p className="text-dark-400 text-xs">{t('trustFeatures.quality.desc')}</p>
             </div>
 
             <div className="bg-white rounded-lg p-4 text-center shadow-sm">
               <div className="w-10 h-10 bg-accent-green/10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Eye className="text-accent-green" size={20} />
               </div>
-              <h3 className="font-bold text-dark-600 text-sm">实地看机</h3>
-              <p className="text-dark-400 text-xs">满意再交易</p>
+              <h3 className="font-bold text-dark-600 text-sm">{t('trustFeatures.delivery.title')}</h3>
+              <p className="text-dark-400 text-xs">{t('trustFeatures.delivery.desc')}</p>
             </div>
 
             <div className="bg-white rounded-lg p-4 text-center shadow-sm">
               <div className="w-10 h-10 bg-accent-orange/10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Award className="text-accent-orange" size={20} />
               </div>
-              <h3 className="font-bold text-dark-600 text-sm">品牌齐全</h3>
-              <p className="text-dark-400 text-xs">主流品牌</p>
+              <h3 className="font-bold text-dark-600 text-sm">{t('trustFeatures.quality.title')}</h3>
+              <p className="text-dark-400 text-xs">{t('trustFeatures.quality.desc')}</p>
             </div>
 
             <div className="bg-white rounded-lg p-4 text-center shadow-sm">
               <div className="w-10 h-10 bg-accent-red/10 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Headphones className="text-accent-red" size={20} />
               </div>
-              <h3 className="font-bold text-dark-600 text-sm">专业服务</h3>
-              <p className="text-dark-400 text-xs">一对一咨询</p>
+              <h3 className="font-bold text-dark-600 text-sm">{t('trustFeatures.delivery.title')}</h3>
+              <p className="text-dark-400 text-xs">{t('trustFeatures.delivery.desc')}</p>
             </div>
           </div>
         </div>
@@ -118,7 +120,7 @@ export default function Home() {
       {brands.length > 0 && (
         <section className="py-8 bg-white border-y border-dark-100">
           <div className="container mx-auto px-4">
-            <p className="text-center text-dark-400 mb-4 text-xs">合作品牌</p>
+            <p className="text-center text-dark-400 mb-4 text-xs">{t('brandShowcase')}</p>
             <div className="flex flex-wrap justify-center items-center gap-4">
               {brands.map((brand) => (
                 <div key={brand} className="text-center">
@@ -136,12 +138,12 @@ export default function Home() {
       <section className="py-8 bg-dark-100">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold text-dark-600">热门产品</h2>
+            <h2 className="text-lg font-bold text-dark-600">{t('featuredProducts')}</h2>
             <Link
               to="/products"
               className="text-primary-500 hover:text-primary-600 text-sm font-medium flex items-center gap-1 transition-colors"
             >
-              查看全部
+              {t('viewDetails')}
               <ArrowRight size={14} />
             </Link>
           </div>
@@ -157,18 +159,18 @@ export default function Home() {
       {/* Trust Banner */}
       <section className="py-8 bg-gradient-to-br from-primary-500 to-primary-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-lg font-bold mb-2">诚信经营</h2>
+          <h2 className="text-lg font-bold mb-2">{t('trustTitle')}</h2>
           <p className="text-white/80 text-sm mb-4">
-            所有设备信息真实可靠
+            {t('trustFeatures.quality.desc')}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <div className="flex items-center gap-1">
               <CheckCircle size={14} className="text-white/80" />
-              <span className="text-sm">真实车况</span>
+              <span className="text-sm">{t('trustFeatures.quality.title')}</span>
             </div>
             <div className="flex items-center gap-1">
               <CheckCircle size={14} className="text-white/80" />
-              <span className="text-sm">实地看机</span>
+              <span className="text-sm">{t('trustFeatures.delivery.title')}</span>
             </div>
           </div>
         </div>
@@ -177,7 +179,7 @@ export default function Home() {
       {/* Contact */}
       <section className="py-8 bg-dark-600 text-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-lg font-bold text-center mb-6">联系我们</h2>
+          <h2 className="text-lg font-bold text-center mb-6">{t('contactInfo')}</h2>
           
           <div className="grid grid-cols-2 gap-3">
             <a
@@ -187,7 +189,7 @@ export default function Home() {
               <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-2">
                 <Phone size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1">电话</h3>
+              <h3 className="font-bold text-sm mb-1">{t('phone')}</h3>
               <p className="text-dark-200 text-xs">{contact.phone}</p>
             </a>
 
@@ -195,7 +197,7 @@ export default function Home() {
               <div className="w-10 h-10 bg-accent-green rounded-full flex items-center justify-center mx-auto mb-2">
                 <MessageCircle size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1">微信</h3>
+              <h3 className="font-bold text-sm mb-1">{t('weChat')}</h3>
               <p className="text-dark-200 text-xs">{contact.wechat}</p>
             </div>
 
@@ -203,7 +205,7 @@ export default function Home() {
               <div className="w-10 h-10 bg-accent-orange rounded-full flex items-center justify-center mx-auto mb-2">
                 <MapPin size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1">地址</h3>
+              <h3 className="font-bold text-sm mb-1">{t('contact')}</h3>
               <p className="text-dark-200 text-xs">{contact.address}</p>
             </div>
 
@@ -211,7 +213,7 @@ export default function Home() {
               <div className="w-10 h-10 bg-accent-red rounded-full flex items-center justify-center mx-auto mb-2">
                 <Clock size={18} />
               </div>
-              <h3 className="font-bold text-sm mb-1">营业时间</h3>
+              <h3 className="font-bold text-sm mb-1">{t('about')}</h3>
               <p className="text-dark-200 text-xs">{contact.businessHours}</p>
             </div>
           </div>
