@@ -32,8 +32,6 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-        env:
-          VITE_APP_TITLE: 挖掘机销售平台
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
